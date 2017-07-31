@@ -1,0 +1,14 @@
+sign assembly
+=============
+
+prepare a key with:
+```
+sn -k LXRbackup.snk
+```
+
+packaging
+=========
+
+nuget pack pkg.nuspec -Verbosity detailed
+
+
