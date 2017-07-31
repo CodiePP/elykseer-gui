@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DAE580F3-0149-4D65-AFCA-18E5290CE3B7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LXRbackup</RootNamespace>
+    <AssemblyName>LXRbackup</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>LXRbackup.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="FSharp.Core" />
+    <Reference Include="ManagedOpenSsl">
+      <HintPath>..\..\fLXR\ManagedOpenSsl\ManagedOpenSsl.dll</HintPath>
+    </Reference>
+    <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <Package>monodevelop</Package>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xwt.Gtk, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <Package>monodevelop</Package>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="sharpPRNG">
+      <HintPath>..\packages\sharpPRNG.1.0.3\lib\sharpPRNG.dll</HintPath>
+    </Reference>
+    <Reference Include="fLXR">
+      <HintPath>..\..\elykseer-base\bin\Debug\fLXR.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Parameter.fsi" />
+    <Compile Include="Parameter.fs" />
+    <Compile Include="..\Fsh\Fsh.fsi">
+      <Link>Fsh.fsi</Link>
+    </Compile>
+    <Compile Include="..\Fsh\Fsh.fs">
+      <Link>Fsh.fs</Link>
+    </Compile>
+    <Compile Include="MainWindow.fs" />
+    <Compile Include="ThisApplication.fsi" />
+    <Compile Include="ThisApplication.fs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
+  <ItemGroup>
+    <Compile Include="Main.fs" />
+    <None Include="..\..\fLXR\ManagedOpenSsl\ManagedOpenSsl.dll.config">
+      <Link>ManagedOpenSsl.dll.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="..\packages\sharpPRNG.1.0.3\lib\sharpPRNG.dll.config">
+      <Link>sharpPRNG.dll.config</Link>
+    </None>
+    <None Include="..\packages\sharpPRNG.1.0.3\lib\libprngCpp.1.0.2.so">
+      <Link>libprngCpp.1.0.2.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
