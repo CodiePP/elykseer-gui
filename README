@@ -1,0 +1,10 @@
+Prepare keys for signature
+==========================
+
+sn -k LXRbackup/LXRbackup.snk
+sn -k LXRrestore/LXRrestore.snk
+
+Build
+=====
+
+xbuild LXR_GUIs.Mono.sln 

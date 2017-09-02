@@ -3,13 +3,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ADE47990-B2EF-40C3-92B5-6D4A74DA8214}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>LXRrestore</RootNamespace>
-    <AssemblyName>LXRrestore</AssemblyName>
+    <ProjectGuid>{DAE580F3-0149-4D65-AFCA-18E5290CE3B7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LXRbackup</RootNamespace>
+    <AssemblyName>LXRbackup</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>LXRrestore.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>LXRbackup.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,66 +20,81 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
-    <ConsolePause>false</ConsolePause>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="FSharp.Core" />
+    <Reference Include="ManagedOpenSsl">
+      <HintPath>..\..\openssl-net_development\bin\Debug\ManagedOpenSsl.dll</HintPath>
+    </Reference>
     <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <Package>monodevelop</Package>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xwt.Gtk, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <Private>True</Private>
       <Package>monodevelop</Package>
-    </Reference>
-    <Reference Include="ManagedOpenSsl">
-      <HintPath>..\..\fLXR\ManagedOpenSsl\ManagedOpenSsl.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="sharpPRNG">
-      <HintPath>..\packages\sharpPRNG.1.0.3\lib\sharpPRNG.dll</HintPath>
+      <HintPath>..\..\sharpPRNG_development\sharpPRNG\sharpPRNG\bin\Debug\sharpPRNG.dll</HintPath>
     </Reference>
     <Reference Include="fLXR">
-      <HintPath>..\..\elykseer-base\bin\Debug\fLXR.dll</HintPath>
+      <HintPath>..\..\elykseer-base_development\bin\Debug\fLXR.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Parameter.fsi" />
     <Compile Include="Parameter.fs" />
-    <Compile Include="MainWindow.fs" />
     <Compile Include="..\Fsh\Fsh.fsi">
       <Link>Fsh.fsi</Link>
     </Compile>
     <Compile Include="..\Fsh\Fsh.fs">
       <Link>Fsh.fs</Link>
     </Compile>
+    <Compile Include="MainWindow.fs" />
     <Compile Include="ThisApplication.fsi" />
     <Compile Include="ThisApplication.fs" />
-    <Compile Include="Main.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Deployment.LinuxDeployData scriptName="start_LXRrestore" />
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
   <ItemGroup>
-    <None Include="..\..\fLXR\ManagedOpenSsl\ManagedOpenSsl.dll.config">
+    <None Include="..\..\openssl-net_development\bin\Debug\ManagedOpenSsl.dll.config">
       <Link>ManagedOpenSsl.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
-    <None Include="..\packages\sharpPRNG.1.0.3\lib\sharpPRNG.dll.config">
-      <Link>sharpPRNG.dll.config</Link>
+    <None Include="..\..\openssl-net_development\bin\Debug\libcrypto.linux.1.0.2.so">
+      <Link>libcrypto.linux.1.0.2.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\packages\sharpPRNG.1.0.3\lib\libprngCpp.1.0.2.so">
-      <Link>libprngCpp.1.0.2.so</Link>
+    <None Include="..\..\openssl-net_development\bin\Debug\libssl.linux.1.0.2.so">
+      <Link>libssl.linux.1.0.2.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\openssl-net_development\bin\Debug\libcrypto.freebsd.1.0.2.so">
+      <Link>libcrypto.freebsd.1.0.2.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\openssl-net_development\bin\Debug\libssl.freebsd.1.0.2.so">
+      <Link>libssl.freebsd.1.0.2.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\openssl-net_development\bin\Debug\libcrypto.osx.1.0.2.dylib">
+      <Link>libcrypto.osx.1.0.2.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\openssl-net_development\bin\Debug\libssl.osx.1.0.2.dylib">
+      <Link>libssl.osx.1.0.2.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\sharpPRNG_development\libprngCpp.linux.1.0.4.so">
+      <Link>libprngCpp.linux.1.0.4.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\sharpPRNG_development\sharpPRNG\sharpPRNG\bin\Debug\sharpPRNG.dll.config">
+      <Link>sharpPRNG.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
