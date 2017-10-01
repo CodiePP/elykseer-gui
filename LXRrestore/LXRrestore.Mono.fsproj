@@ -41,8 +41,11 @@
     <Reference Include="sharpPRNG">
       <HintPath>..\..\sharpPRNG_development\sharpPRNG\sharpPRNG\bin\Debug\sharpPRNG.dll</HintPath>
     </Reference>
-    <Reference Include="fLXR">
-      <HintPath>..\..\elykseer-base_development\bin\Debug\fLXR.dll</HintPath>
+    <Reference Include="eLyKseeR">
+      <HintPath>..\..\elykseer-base_development\bin\Debug\eLyKseeR.dll</HintPath>
+    </Reference>
+    <Reference Include="eLyKseeR-native.Mono">
+      <HintPath>..\..\elykseer-base_development\bin\Debug\eLyKseeR-native.Mono.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -106,5 +109,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>
