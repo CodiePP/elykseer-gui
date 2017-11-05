@@ -8,6 +8,7 @@ module ThisApplication =
     open Xwt
     open Xwt.Drawing
     open Fsh
+    open LXRgui
 
    // events which control control flow
     let stage = new Event<int>()
@@ -18,9 +19,9 @@ module ThisApplication =
     let enter_filepath = filepath.Publish
 
     // event which shows text in statusbar
-    let statbar = new Event<string>()
-    let show_statbar = statbar.Publish
-    let publish_statbar (m : string) = statbar.Trigger(m)
+    //let statbar = new Event<string>()
+    //let show_statbar = statbar.Publish
+    //let publish_statbar (m : string) = statbar.Trigger(m)
 
     let mutable optN = Parameter.intOrDefault "nchunks"  256
     let mutable optComp = Parameter.intOrDefault "compression" 0
@@ -28,6 +29,8 @@ module ThisApplication =
     let mutable optRed = Parameter.intOrDefault "redundancy" 0
     let mutable optOutP = Parameter.stringOrDefault "outputdir" "/tmp/LXR"
     let mutable optDatP = Parameter.stringOrDefault "dbdir" "/tmp/meta"
+
+    let mutable optPath = ""
 
     // the data model
     let df1 = new DataField<string>()
@@ -46,6 +49,7 @@ module ThisApplication =
         ()
 
     let addDir1 fn = 
+        SBCLab.LXR.Logging.log () <| Printf.sprintf "addDir1 %A" fn
         // must be a directory
         // only first depth files are added
         if SBCLab.LXR.FileCtrl.dirExists fn then
@@ -62,17 +66,21 @@ module ThisApplication =
         ()
 
     let rec addDir fn = 
+        SBCLab.LXR.Logging.log () <| Printf.sprintf "addDir %A" fn
         // must be a directory
         // recursively add all files
-        //if SBCLab.LXR.FileCtrl.dirExists fn then
-        let dirinfo = new DirectoryInfo(fn) in
-        if dirinfo.Attributes.HasFlag(FileAttributes.ReparsePoint)
-            || dirinfo.Attributes.HasFlag(FileAttributes.System) then
-            Console.WriteLine("skipping symlink: " + fn)
-        else
-            addDir1 fn
-            for fp in dirinfo.EnumerateDirectories() do
-                addDir fp.FullName
+        if SBCLab.LXR.FileCtrl.dirExists fn then
+            try
+                let dirinfo = new DirectoryInfo(fn) in
+                if dirinfo.Attributes.HasFlag(FileAttributes.ReparsePoint)
+                    || dirinfo.Attributes.HasFlag(FileAttributes.System) then
+                    Console.WriteLine("skipping symlink: " + fn)
+                else
+                    addDir1 fn
+                    for fp in dirinfo.EnumerateDirectories() do
+                        addDir fp.FullName
+            with
+            | _ -> ()
         ()
 
     let selectDirectoryDialog (e : EventArgs) : string option =
@@ -338,9 +346,242 @@ module ThisApplication =
         stage.Trigger(0)
         ()
 
+    let select_disk (drv: DriveInfo) =
+        ()
+
+    let show_disks (view: Xwt.ScrollView) =
+        let t = new Table()
+        Application.TimeoutInvoke(500, fun _ -> 
+            t.Clear()
+            t.Add(new Label("name"), 0, 0)
+            t.Add(new Label("path"), 1, 0)
+            t.Add(new Label("format"), 2, 0)
+            t.Add(new Label("size"), 3, 0)
+            t.Add(new Label("free"), 4, 0)
+            System.IO.DriveInfo.GetDrives() |>
+                Seq.iteri (fun i (drv: DriveInfo) -> 
+                               let r = FshButton.createWithHandler drv.Name
+                                             (fun b e -> if SBCLab.LXR.FileCtrl.dirExists drv.RootDirectory.FullName then
+                                                            optDatP <- drv.RootDirectory.FullName
+                                                            //Application.Invoke(fun _ ->  stage.Trigger(4))
+                                             )
+                               t.Add(r, 0, i+1)
+                               t.Add(new Label(drv.RootDirectory.FullName), 1, i+1)
+                               t.Add(new Label(drv.DriveFormat), 2, i+1)
+                               t.Add(new Label(Printf.sprintf "%i GB" (drv.TotalSize / 1024L / 1024L / 1024L)), 3, i+1)
+                               t.Add(new Label(Printf.sprintf "%i %%" (drv.TotalFreeSpace * 100L / (max 1L  drv.TotalSize))), 4, i+1)
+                          )
+            view.Visible
+            ) |> ignore
+        view.Content <- t
+        view.Visible <- true
+
+    let show_network (view: Xwt.ScrollView) =
+        let t = new Table()
+        t.Add(new Label("name"), 0, 0)
+        t.Add(new Label("status"), 1, 0)
+        t.Add(new Label("speed"), 2, 0)
+        Application.TimeoutInvoke(500, fun _ -> 
+            t.Clear()
+            t.Add(new Label("name"), 0, 0)
+            t.Add(new Label("status"), 1, 0)
+            t.Add(new Label("speed"), 2, 0)
+            System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces() |>
+                Seq.iteri (fun i iface -> t.Add(new Label(iface.Id), 0, i+1)
+                                          t.Add(new Label(iface.OperationalStatus.ToString()), 1, i+1)
+                                          t.Add(new Label(iface.Speed.ToString()), 2, i+1)
+                                          )
+            view.Visible
+            ) |> ignore            
+        view.Content <- t
+        view.Visible <- true
+
     let initialize () =
         let mainwindow = new MainWindow.Window()
-        let vpaned = new VPaned()
+        let mainbox = new HBox()
+        mainbox.ExpandHorizontal <- true
+        mainbox.ExpandVertical <- true
+        mainbox.Spacing <- 0.0
+        mainbox.MarginTop <- 0.0
+        mainbox.MarginRight <- 0.0
+        mainbox.MarginLeft <- 0.0
+        mainbox.MarginBottom <- 0.0
+        mainbox.PackStart(
+            let leftdiv = new Frame()
+            leftdiv.HeightRequest <- 1.0
+            leftdiv.MinWidth <- 30.0
+            leftdiv.BackgroundColor <- Coloring.nantucket //.FromBytes(154uy,171uy,185uy)
+            leftdiv )
+        let maindiv = new VBox()
+        maindiv.ExpandVertical <- true
+        maindiv.ExpandHorizontal <- true
+        maindiv.Spacing <- 0.0
+        maindiv.MarginTop <- 0.0
+        maindiv.MarginRight <- 0.0
+        maindiv.MarginLeft <- 0.0
+        maindiv.MarginBottom <- 0.0
+        //maindiv.HeightRequest <- 1.0
+        maindiv.MinWidth <- 560.0
+        maindiv.BackgroundColor <- Coloring.nantucket  //.FromBytes(154uy,171uy,185uy)
+        mainbox.PackStart( maindiv )
+        mainbox.PackEnd(
+            let rightdiv = new Frame()
+            rightdiv.HeightRequest <- 1.0
+            rightdiv.MinWidth <- 30.0
+            rightdiv.BackgroundColor <- Coloring.nantucket //.FromBytes(154uy,171uy,185uy)
+            rightdiv )
+        let fontbold = Font.SystemFont.WithWeight(FontWeight.Bold)
+        maindiv.PackStart(
+            let f = new Frame()
+            f.MinHeight <- 10.0
+            f )
+        maindiv.PackStart(
+            let logodiv = new HBox()
+            logodiv.BackgroundColor <- Coloring.ink //.FromBytes(25uy, 52uy, 70uy)
+            logodiv.PackStart(
+                let logo1 = new Label("eLyKseeR")
+                logo1.TextColor <- Coloring.jasmine //.FromBytes(233uy, 199uy, 123uy)
+                logo1.Font <- fontbold
+                logo1 )
+            logodiv.PackStart(
+                let logo1 = new Label("LXRbackup")
+                logo1.TextColor <- Coloring.jasmine //.FromBytes(233uy, 199uy, 123uy)
+                logo1.Font <- fontbold
+                logo1 )
+            logodiv.PackEnd(
+                let logo1 = new Label("version 1.0")
+                logo1.TextColor <- Coloring.jasmine //.FromBytes(233uy, 199uy, 123uy)
+                logo1 )
+            logodiv )
+        let topcontent = new Frame()
+        let topview = new ScrollView()
+        topcontent.MinHeight <- 240.0
+        topcontent.Content <- topview
+        maindiv.PackStart(topcontent)
+
+        let centercontent = new Table()
+        centercontent.HeightRequest <- 100.0
+        centercontent.ExpandVertical <- true
+        centercontent.ExpandHorizontal <- false
+        maindiv.PackStart(centercontent)
+        let te = new TextEntry()
+        te.ExpandHorizontal <- true
+        te.Font <- Font.SystemFont.WithSize(14.0)
+        te.WidthRequest <- 560.0 - 35.0
+        te.Visible <- false
+        te.Sensitive <- false
+        te.SetDragDropTarget(TransferDataType.Uri)
+        te.DragDrop.Add(fun e -> Console.WriteLine("drop: {0} T={1}", e.Action, e.Data.GetValue(TransferDataType.Uri))
+                                 (*(fun i (u:Uri) -> Console.WriteLine("   @ {0} = {1}", i, u.AbsolutePath)
+                                                   addFile u.AbsolutePath
+                                                   addDir u.AbsolutePath ) 0 e.Data.Uris.[0]*)
+                       )
+        reached_stage.Add(fun i -> if i = 1 || i = 2 || i = 3 then te.Visible <- true
+                                   else te.Visible <- false
+                                   if i = 1 then
+                                      te.Sensitive <- true
+                                      te.SetFocus()
+                                   else te.Sensitive <- false
+                                   //if i = 2 then
+                                   //   Application.Invoke(fun _ -> addDir te.Text)
+                         )
+        let bsel = FshButton.imageWithHandler "select" "select.png" 
+                    (fun btn e -> match selectDirectoryDialog e with
+                                  | Some d -> Application.Invoke(fun _ -> te.Text <- d)
+                                              ()
+                                  | None -> () )
+        bsel.ExpandVertical <- false
+        bsel.ExpandHorizontal <- false
+        bsel.MinHeight <- 30.0
+        bsel.Visible <- false
+        bsel.ImagePosition <- ContentPosition.Center
+        reached_stage.Add(fun i -> if i = 1 || i = 2 || i = 3 then bsel.Visible <- true
+                                   else bsel.Visible <- false
+                                   if i = 1 then bsel.Sensitive <- true
+                                   else bsel.Sensitive <- false
+                         )
+
+        centercontent.Add(te, 0, 0)
+        centercontent.Add(bsel, 1, 0) 
+
+        reached_stage.Add(fun i -> match i with
+                                   | 0 -> ()
+                                   | _ -> () )
+        let textcontent = new Label()
+        textcontent.BackgroundColor <- Coloring.nantucket
+        textcontent.TextColor <- Coloring.ink
+        textcontent.MinHeight <- 240.0
+        textcontent.Font <- Font.SystemFont.WithSize(14.0)
+        maindiv.PackStart(textcontent)
+        reached_stage.Add(fun i -> match i with
+                                   | 0 -> textcontent.Text <- "Warning: please, disconnect all network interfaces\nand unplug all USB devices."
+                                   | 1 -> textcontent.Text <- "This path (folder or file) is going to be encrypted\nand copied into the archive."
+                                   | 2 -> textcontent.Text <- "Please, select the USB stick to hold private data\n(i.e. meta data and encryption keys)"
+                                   | _ -> textcontent.Text <- ""
+                         )
+
+        let bottombox = new HBox()
+        maindiv.PackEnd(
+            let f = new Frame()
+            f.MinHeight <- 10.0
+            f )
+        maindiv.PackEnd(bottombox)
+        bottombox.PackStart(
+            let b = FshButton.imageWithHandler "..." "options.png"
+                        (fun btn e -> Console.WriteLine("button clicked: {0}", btn.Label)
+                                      editOptions e )
+            reached_stage.Add(fun i -> if i = 2 then b.Visible <- true
+                                       else b.Visible <- false)
+            b
+            )
+        let btncont = FshButton.imageWithHandler "continue" "continue.png" 
+                         (fun btn e -> let s = btn.Tag :?> int
+                                       if s < 5 then
+                                          btn.Tag <- (s + 1)
+                                          stage.Trigger(s + 1)
+                         )
+        btncont.Tag <- 0
+        reached_stage.Add(fun i -> if i = 1 then
+                                      // select path
+                                      btncont.Visible <- false
+                                      te.Changed.Add(fun t -> if SBCLab.LXR.FileCtrl.dirExists te.Text then
+                                                                 btncont.Visible <- true
+                                                              else
+                                                                 btncont.Visible <- false
+                                                    )
+                                   elif i = 2 then
+                                      // select output drive
+                                      btncont.Visible <- false
+                                   elif i = 3 then
+                                      btncont.Visible <- true
+                                      //b.Label <- "start"
+                                      btncont.Image <- Image.FromResource("start.png")
+                                   elif i = 4 then
+                                      //b.Label <- "cancel"
+                                      btncont.Image <- Image.FromResource("cancel.png")
+                                   elif i = 5 then
+                                      //b.Label <- "close"
+                                      btncont.Image <- Image.FromResource("close.png")
+                         )
+        bottombox.PackEnd(
+            btncont
+            )
+        reached_stage.Add(fun i -> match i with
+                                   | 0 -> show_network topview
+                                   | 1 -> topview.Visible <- false
+                                   | 2 -> show_disks topview
+                                   | 3 -> topview.Visible <- false
+                                   | _ -> () )
+
+
+
+
+
+
+
+
+(*        let vpaned = new VPaned()
+        vpaned.BackgroundColor <- Color.FromBytes(154uy,171uy,185uy)
         vpaned.PositionFraction <- 1.0
         let statusbar = new TextEntry()
         statusbar.ExpandHorizontal <- true
@@ -448,8 +689,9 @@ module ThisApplication =
             b
             )
         hpaned.Panel2.Content <- btns
-        vpaned.Panel1.Content <- hpaned
-        mainwindow.Content <- vpaned
+        vpaned.Panel1.Content <- hpaned *)
+
+        mainwindow.Content <- mainbox //vpaned
         mainwindow.Show()
         stage.Trigger(0)
         mainwindow   // return top widget

@@ -47,12 +47,16 @@
     <Reference Include="eLyKseeR-native.Mono">
       <HintPath>..\..\elykseer-base_development\bin\Debug\eLyKseeR-native.Mono.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Parameter.fsi" />
     <Compile Include="Parameter.fs" />
     <Compile Include="MainWindow.fs" />
+    <Compile Include="..\Coloring.fs">
+      <Link>Coloring.fs</Link>
+    </Compile>
     <Compile Include="..\Fsh\Fsh.fsi">
       <Link>Fsh.fsi</Link>
     </Compile>

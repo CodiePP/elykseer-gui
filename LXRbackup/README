@@ -12,3 +12,24 @@ packaging
 nuget pack pkg.nuspec -Verbosity detailed
 
 
+
+process
+=======
+
+1.) Auswahl Ordner, der gesichert werden soll
+
+2.) Angabe Pfad fuer meta Daten (sollte Stick sein)
+
+3.) run
+
+4.) Resultat: auf gleicher Ebene wie Ursprungsordner:  Ordner.lxr
+    enthaelt chunks
+
+5.) Resultat: Ordner.key (auf Stick)
+    enthaelt meta Daten
+
+retrieve:
+
+Resultat: Ordner.restored
+
+
