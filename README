@@ -1,10 +1,13 @@
-Prepare keys for signature
-==========================
+# Experimental GUI for eLyKseeR
+
+Copyright (c) 2019 by Alexander Diemand
+
+
+## Prepare keys for signature
 
 sn -k LXRbackup/LXRbackup.snk
 sn -k LXRrestore/LXRrestore.snk
 
-Build
-=====
+## Build
 
 xbuild LXR_GUIs.Mono.sln 

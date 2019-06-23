@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Xwt.Gtk.0.2.169\build\Xwt.Gtk.props" Condition="Exists('..\packages\Xwt.Gtk.0.2.169\build\Xwt.Gtk.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,11 +14,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <Externalconsole>true</Externalconsole>
@@ -26,17 +29,11 @@
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="FSharp.Core" />
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.4.6.2\lib\net45\FSharp.Core.dll</HintPath>
+    </Reference>
     <Reference Include="ManagedOpenSsl">
       <HintPath>..\..\openssl-net_development\bin\Debug\ManagedOpenSsl.dll</HintPath>
-    </Reference>
-    <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <Package>monodevelop</Package>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xwt.Gtk, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <Package>monodevelop</Package>
-      <Private>True</Private>
     </Reference>
     <Reference Include="sharpPRNG">
       <HintPath>..\..\sharpPRNG_development\sharpPRNG\sharpPRNG\bin\Debug\sharpPRNG.dll</HintPath>
@@ -48,7 +45,17 @@
       <HintPath>..\..\elykseer-base_development\bin\Debug\eLyKseeR-native.Mono.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="Xwt">
+      <HintPath>..\packages\Xwt.0.2.169\lib\net40\Xwt.dll</HintPath>
+    </Reference>
+    <Reference Include="Xwt.Gtk">
+      <HintPath>..\packages\Xwt.Gtk.0.2.169\lib\net40\Xwt.Gtk.dll</HintPath>
+    </Reference>
+    <Reference Include="Xwt.Gtk.Mac">
+      <HintPath>..\packages\Xwt.Gtk.Mac.0.2.169\lib\net40\Xwt.Gtk.Mac.dll</HintPath>
+    </Reference>
   </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Parameter.fsi" />
@@ -62,13 +69,29 @@
     <Compile Include="..\Fsh\Fsh.fs">
       <Link>Fsh.fs</Link>
     </Compile>
+    <EmbeddedResource Include="..\Fsh\close.png">
+      <Link>close.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Fsh\continue.png">
+      <Link>continue.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Fsh\options.png">
+      <Link>options.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Fsh\start.png">
+      <Link>start.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Fsh\cancel.png">
+      <Link>cancel.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Fsh\select.png">
+      <Link>select.png</Link>
+    </EmbeddedResource>
     <Compile Include="MainWindow.fs" />
     <Compile Include="ThisApplication.fsi" />
     <Compile Include="ThisApplication.fs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
-  <ItemGroup>
     <Compile Include="Main.fs" />
+    <None Include="packages.config" />
     <None Include="..\..\openssl-net_development\bin\Debug\ManagedOpenSsl.dll.config">
       <Link>ManagedOpenSsl.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -105,25 +128,5 @@
       <Link>sharpPRNG.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Fsh\close.png">
-      <Link>close.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Fsh\continue.png">
-      <Link>continue.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Fsh\options.png">
-      <Link>options.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Fsh\start.png">
-      <Link>start.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Fsh\cancel.png">
-      <Link>cancel.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Fsh\select.png">
-      <Link>select.png</Link>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>

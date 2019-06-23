@@ -551,7 +551,7 @@ module ThisApplication =
                                                     )
                                    elif i = 2 then
                                       // select output drive
-                                      btncont.Visible <- false
+                                      btncont.Visible <- true
                                    elif i = 3 then
                                       btncont.Visible <- true
                                       //b.Label <- "start"
